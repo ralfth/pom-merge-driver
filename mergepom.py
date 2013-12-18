@@ -1,4 +1,4 @@
-#! /usr/bin/env python2
+#! /usr/bin/env python
 
 # Copyright 2013 Ralf Thielow <ralf.thielow@gmail.com>
 # Licensed under the GNU GPL version 2.
