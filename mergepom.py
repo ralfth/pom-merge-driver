@@ -3,7 +3,7 @@
 # Copyright 2013 Ralf Thielow <ralf.thielow@gmail.com>
 # Licensed under the GNU GPL version 2.
 
-import sys, subprocess, shlex
+import sys, subprocess, shlex, codecs
 import xml.dom.minidom as dom
 
 def change_version(old_version, new_version, cont):
@@ -38,11 +38,11 @@ if (current_branch_version != 'unknown' and
 		ancestor_version != 'unknown' and
 		current_branch_version != other_branch_version and
 		other_branch_version != ancestor_version):
-	f = open(sys.argv[2],'r')
+	f = codecs.open(sys.argv[2],'r', 'utf-8')
 	other = f.read()
 	f.close()
 	other = change_version(current_branch_version, other_branch_version, other)
-	f = open(sys.argv[2],'w')
+	f = codecs.open(sys.argv[2],'w', 'utf-8')
 	f.write(other)
 	f.close()
 
@@ -51,7 +51,7 @@ p = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE)
 git_merge_res = p.communicate()[0]
 ret = p.returncode
 
-f = open(sys.argv[2],'w')
+f = codecs.open(sys.argv[2],'w', 'utf-8')
 f.write(git_merge_res)
 f.close
 
