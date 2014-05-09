@@ -19,6 +19,8 @@ git-config:
         name = A custom merge driver for Maven's pom.xml
         driver = $PATH_TO/mergepom.py %O %A %B
 </pre>
+"$PATH_TO" needs to be replaced with the full path to "mergepom.py".
+
 .gitattributes
 <pre>
 pom.xml merge=pommerge
