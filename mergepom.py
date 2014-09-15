@@ -22,11 +22,11 @@ def get_project_version(f):
 						return entry2.firstChild.data
 		return 'unknown'
 	except:
-		print sys.argv[0] + ': error while parsing pom.xml'
+		print(sys.argv[0] + ': error while parsing pom.xml')
 		return 'unknown'
 
 if len(sys.argv) < 4 or len(sys.argv) > 5:
-	print "Wrong number of arguments."
+	print("Wrong number of arguments.")
 	sys.exit(-1)
 
 ancestor_version = get_project_version(sys.argv[1])
@@ -51,8 +51,19 @@ p = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE)
 git_merge_res = p.communicate()[0]
 ret = p.returncode
 
+git_merge_res_str = git_merge_res.strip().decode('utf-8')
+
+cmd2 = "git rev-parse --abbrev-ref HEAD"
+p2 = subprocess.check_output(shlex.split(cmd2))
+branch = p2.strip().decode('utf-8')
+
+# do not update pom project version if on the develop branch, allows for gitflow release-finish to work better
+if (branch == 'develop'):
+	print('Merging pom version ' + other_branch_version + ' into develop. Keeping develop version ' + current_branch_version)
+	git_merge_res_str = change_version(other_branch_version, current_branch_version, git_merge_res_str)
+
 f = codecs.open(sys.argv[2],'w', 'utf-8')
-f.write(git_merge_res)
+f.write(git_merge_res_str)
 f.close
 
 sys.exit(ret)

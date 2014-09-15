@@ -10,6 +10,8 @@ consistent in case of trivial merges that might happen
 at the same time. All other changes in the file will
 be merged as usual.
 
+Exception: if current branch is "develop", the project version in the current branch will not be changed. This makes working with gitflow release-finish easier, as merges into develop include everything but the project version.
+
 Installation
 -------------
 
