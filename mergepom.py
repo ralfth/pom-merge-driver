@@ -33,6 +33,7 @@ ancestor_version = get_project_version(sys.argv[1])
 current_branch_version = get_project_version(sys.argv[2])
 other_branch_version = get_project_version(sys.argv[3])
 
+# change current version in order to avoid merge conflicts
 if (current_branch_version != 'unknown' and
 		other_branch_version != 'unknown' and
 		ancestor_version != 'unknown' and
@@ -57,9 +58,9 @@ cmd2 = "git rev-parse --abbrev-ref HEAD"
 p2 = subprocess.check_output(shlex.split(cmd2))
 branch = p2.strip().decode('utf-8')
 
-# do not update pom project version if on the develop branch, allows for gitflow release-finish to work better
-if (branch == 'develop'):
-	print('Merging pom version ' + other_branch_version + ' into develop. Keeping develop version ' + current_branch_version)
+# revert pom project version on current branch, unless in master. Allows for gitflow release-finish, hotfix-finish, and feature-finish to work better
+if (branch != 'master'):
+	print('Merging pom version ' + other_branch_version + ' into ' + branch + '. Keeping version ' + current_branch_version)
 	git_merge_res_str = change_version(other_branch_version, current_branch_version, git_merge_res_str)
 
 f = codecs.open(sys.argv[2],'w', 'utf-8')
