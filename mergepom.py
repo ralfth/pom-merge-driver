@@ -6,9 +6,11 @@
 import sys, subprocess, shlex, codecs
 import xml.dom.minidom as dom
 
+
 def change_version(old_version, new_version, cont):
 	return cont.replace("<version>"+old_version+"</version>",
 			"<version>" + new_version + "</version>")
+
 
 def get_project_version(f):
 	try:
@@ -39,13 +41,11 @@ if (current_branch_version != 'unknown' and
 		ancestor_version != 'unknown' and
 		current_branch_version != other_branch_version and
 		other_branch_version != ancestor_version):
-	f = codecs.open(sys.argv[2],'r', 'utf-8')
-	other = f.read()
-	f.close()
+	with codecs.open(sys.argv[2], 'r', 'utf-8') as f:
+		other = f.read()
 	other = change_version(current_branch_version, other_branch_version, other)
-	f = codecs.open(sys.argv[2],'w', 'utf-8')
-	f.write(other)
-	f.close()
+	with codecs.open(sys.argv[2], 'w', 'utf-8') as f:
+		f.write(other)
 
 cmd = "git merge-file -p -L mine -L base -L theirs " + sys.argv[2] + " " + sys.argv[1] + " " + sys.argv[3]
 p = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE)
@@ -63,8 +63,7 @@ if (branch != 'master'):
 	print('Merging pom version ' + other_branch_version + ' into ' + branch + '. Keeping version ' + current_branch_version)
 	git_merge_res_str = change_version(other_branch_version, current_branch_version, git_merge_res_str)
 
-f = codecs.open(sys.argv[2],'w', 'utf-8')
-f.write(git_merge_res_str)
-f.close
+with codecs.open(sys.argv[2], 'w', 'utf-8') as f:
+	f.write(git_merge_res_str)
 
 sys.exit(ret)
