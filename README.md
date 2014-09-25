@@ -10,6 +10,11 @@ consistent in case of trivial merges that might happen
 at the same time. All other changes in the file will
 be merged as usual.
 
+Before committing however, the project version is reverted
+back to its previous value, unless on master branch.
+This allows for gitflow release-finish, hotfix-finish,
+and feature-finish to work better.
+
 Installation
 -------------
 
