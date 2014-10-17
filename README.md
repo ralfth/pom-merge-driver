@@ -15,6 +15,10 @@ back to its previous value, unless on master branch.
 This allows for gitflow release-finish, hotfix-finish,
 and feature-finish to work better.
 
+If Git configuration variable "merge.pommerge.keepmasterversion"
+is set to true, the project version is always reverted
+even on master branch.
+
 Installation
 -------------
 
