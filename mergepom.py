@@ -3,7 +3,7 @@
 # Copyright 2013 Ralf Thielow <ralf.thielow@gmail.com>
 # Licensed under the GNU GPL version 2.
 
-import sys, subprocess, shlex, codecs
+import sys, subprocess, shlex, codecs, re
 import xml.dom.minidom as dom
 
 
@@ -82,7 +82,12 @@ if (current_branch_version is not None and (keep or branch != 'master')):
 	print('Merging pom version ' + other_branch_version + ' into ' + branch + '. Keeping version ' + current_branch_version)
 	git_merge_res_str = change_version(other_branch_version, current_branch_version, git_merge_res_str)
 
-with codecs.open(sys.argv[2], 'w', 'utf-8') as f:
+enc = 'utf-8'
+m = re.search('encoding=[\'"](.*?)[\'"]', git_merge_res_str.splitlines()[0])
+if m is not None:
+	enc = m.group(1)
+
+with codecs.open(sys.argv[2], 'w', enc) as f:
 	f.write(git_merge_res_str)
 
 sys.exit(ret)
