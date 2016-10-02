@@ -64,17 +64,17 @@ ret = p.returncode
 
 git_merge_res_str = git_merge_res.strip().decode('utf-8')
 
-cmd2 = "git rev-parse --abbrev-ref HEAD"
-p2 = subprocess.check_output(shlex.split(cmd2))
-branch = p2.strip().decode('utf-8')
+cmd = "git rev-parse --abbrev-ref HEAD"
+p = subprocess.check_output(shlex.split(cmd))
+branch = p.strip().decode('utf-8')
 
-cmd3 = "git config --get --bool merge.pommerge.keepmasterversion"
-p3 = subprocess.Popen(shlex.split(cmd3), stdout=subprocess.PIPE)
-val = p3.communicate()[0]
+cmd = "git config --get --bool merge.pommerge.keepmasterversion"
+p = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE)
+val = p.communicate()[0]
 val = val.strip().decode('utf-8')
 
 keep = False
-if (p3.returncode == 0 and val == 'true'):
+if (p.returncode == 0 and val == 'true'):
 	keep = True
 
 # revert pom project version on current branch, unless in master. Allows for gitflow release-finish, hotfix-finish, and feature-finish to work better
