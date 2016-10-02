@@ -51,10 +51,16 @@ if (
 	and current_branch_version != other_branch_version
 	and other_branch_version != ancestor_version
 ):
-	with codecs.open(sys.argv[2], 'r', 'utf-8') as f:
+	enc = 'utf-8'
+	with open(sys.argv[2], 'r') as f:
+		line = f.readline()
+	m = re.search('encoding=[\'"](.*?)[\'"]', line)
+	if m is not None:
+		enc = m.group(1)
+	with codecs.open(sys.argv[2], 'r', enc) as f:
 		other = f.read()
 	other = change_version(current_branch_version, other_branch_version, other)
-	with codecs.open(sys.argv[2], 'w', 'utf-8') as f:
+	with codecs.open(sys.argv[2], 'w', enc) as f:
 		f.write(other)
 
 cmd = "git merge-file -p -L mine -L base -L theirs " + sys.argv[2] + " " + sys.argv[1] + " " + sys.argv[3]
