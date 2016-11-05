@@ -6,6 +6,12 @@
 import sys, subprocess, shlex, codecs, re
 import xml.dom.minidom as dom
 
+def get_enc(line):
+        m = re.search('encoding=[\'"](.*?)[\'"]', line)
+        if m is not None:
+                return m.group(1)
+        return 'utf-8'
+
 
 def change_version(old_version, new_version, cont):
 	return cont.replace("<version>"+old_version+"</version>",
@@ -51,12 +57,8 @@ if (
 	and current_branch_version != other_branch_version
 	and other_branch_version != ancestor_version
 ):
-	enc = 'utf-8'
 	with open(sys.argv[2], 'r') as f:
-		line = f.readline()
-	m = re.search('encoding=[\'"](.*?)[\'"]', line)
-	if m is not None:
-		enc = m.group(1)
+		enc = get_enc(f.readline())
 	with codecs.open(sys.argv[2], 'r', enc) as f:
 		other = f.read()
 	other = change_version(current_branch_version, other_branch_version, other)
@@ -68,7 +70,12 @@ p = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE)
 git_merge_res = p.communicate()[0]
 ret = p.returncode
 
-git_merge_res_str = git_merge_res.decode('utf-8')
+enc = 'utf-8'
+git_merge_res_str = git_merge_res.decode(enc)
+# was this encoding the right choice?
+enc = get_enc(git_merge_res_str.splitlines()[0])
+if enc != 'utf-8':
+        git_merge_res_str = git_merge_res.decode(enc)
 
 cmd = "git rev-parse --abbrev-ref HEAD"
 p = subprocess.check_output(shlex.split(cmd))
@@ -87,11 +94,6 @@ if (p.returncode == 0 and val == 'true'):
 if (current_branch_version is not None and (keep or branch != 'master')):
 	print('Merging pom version ' + other_branch_version + ' into ' + branch + '. Keeping version ' + current_branch_version)
 	git_merge_res_str = change_version(other_branch_version, current_branch_version, git_merge_res_str)
-
-enc = 'utf-8'
-m = re.search('encoding=[\'"](.*?)[\'"]', git_merge_res_str.splitlines()[0])
-if m is not None:
-	enc = m.group(1)
 
 with codecs.open(sys.argv[2], 'w', enc) as f:
 	f.write(git_merge_res_str)
