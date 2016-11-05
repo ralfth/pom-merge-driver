@@ -68,7 +68,7 @@ p = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE)
 git_merge_res = p.communicate()[0]
 ret = p.returncode
 
-git_merge_res_str = git_merge_res.strip().decode('utf-8')
+git_merge_res_str = git_merge_res.decode('utf-8')
 
 cmd = "git rev-parse --abbrev-ref HEAD"
 p = subprocess.check_output(shlex.split(cmd))
