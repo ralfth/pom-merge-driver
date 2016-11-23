@@ -6,11 +6,11 @@
 import sys, subprocess, shlex, codecs, re
 import xml.dom.minidom as dom
 
-def get_enc(line):
+def get_enc(line, default):
         m = re.search('encoding=[\'"](.*?)[\'"]', line)
         if m is not None:
                 return m.group(1)
-        return 'utf-8'
+        return default
 
 
 def change_version(old_version, new_version, cont):
@@ -58,7 +58,7 @@ if (
 	and other_branch_version != ancestor_version
 ):
 	with open(sys.argv[2], 'r') as f:
-		enc = get_enc(f.readline())
+		enc = get_enc(f.readline(), 'utf-8')
 	with codecs.open(sys.argv[2], 'r', enc) as f:
 		other = f.read()
 	other = change_version(current_branch_version, other_branch_version, other)
@@ -71,10 +71,16 @@ git_merge_res = p.communicate()[0]
 ret = p.returncode
 
 enc = 'utf-8'
-git_merge_res_str = git_merge_res.decode(enc)
-# was this encoding the right choice?
-enc = get_enc(git_merge_res_str.splitlines()[0])
-if enc != 'utf-8':
+try:
+        git_merge_res_str = git_merge_res.decode(enc)
+except:
+        # utf-8 failed, try again with iso-8859-1
+        enc = 'iso-8859-1'
+        git_merge_res_str = git_merge_res.decode(enc)
+
+oenc = get_enc(git_merge_res_str.splitlines()[0], enc)
+if enc != oenc:
+        enc = oenc
         git_merge_res_str = git_merge_res.decode(enc)
 
 cmd = "git rev-parse --abbrev-ref HEAD"
