@@ -120,6 +120,7 @@ if (p.returncode == 0 and val == 'true'):
 if (current_branch_version is not None and (keep or branch != 'master')):
         print('Merging pom version ' + other_branch_version + ' into ' + branch + '. Keeping version ' + current_branch_version)
         git_merge_res_str = change_version(other_branch_version, current_branch_version, git_merge_res_str)
+        print('Merging pom scm tag ' + other_tag + ' into ' + branch + '. Keeping scm tag ' + current_tag) if have_tags else 0
         git_merge_res_str = change_tag(other_tag, current_tag, git_merge_res_str) if have_tags else git_merge_res_str
 
 with codecs.open(sys.argv[2], 'w', enc) as f:
