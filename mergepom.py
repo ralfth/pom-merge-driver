@@ -76,7 +76,7 @@ if (
         and current_branch_version != other_branch_version
         and other_branch_version != ancestor_version
 ):
-        with open(sys.argv[2], 'r') as f:
+        with open(sys.argv[2], mode='r', encoding='utf-8') as f:
                 enc = get_enc(f.readline(), 'utf-8')
         with codecs.open(sys.argv[2], 'r', enc) as f:
                 other = f.read()
