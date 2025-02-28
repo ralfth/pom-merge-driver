@@ -116,8 +116,13 @@ keep = False
 if (p.returncode == 0 and val == 'true'):
         keep = True
 
+# When rebasing, we always want to keep the other_branch_version (branch being rebased)
+# Unless one has explicitly checked-out by revision-id, branch should only be 'HEAD' when rebasing
+if (branch == 'HEAD'):
+        print('Rebasing pom version ' + other_branch_version + ' into ' + branch)
+
 # revert pom project version on current branch, unless in master. Allows for gitflow release-finish, hotfix-finish, and feature-finish to work better
-if (current_branch_version is not None and (keep or branch != 'master')):
+elif (current_branch_version is not None and (keep or branch != 'master')):
         print('Merging pom version ' + other_branch_version + ' into ' + branch + '. Keeping version ' + current_branch_version)
         git_merge_res_str = change_version(other_branch_version, current_branch_version, git_merge_res_str)
         print('Merging pom scm tag ' + other_tag + ' into ' + branch + '. Keeping scm tag ' + current_tag) if have_tags else 0
